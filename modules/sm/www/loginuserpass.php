@@ -279,9 +279,32 @@ if ( isset ( $headers [ "SSL_CLIENT_CERT" ] ) && strlen ( $headers [ "SSL_CLIENT
     
     try
     {
-        sspmod_sm_Auth_Source_UserPass::handlePkiLogin ( $authStateId , $_SESSION [ "email" ] , $fingerprint , $sp_entity_id ) ;
-		
-		$_SESSION [ "ignore_error" ] = true ;
+                                      //error_log("__________Handle PKI________________");
+
+                                $data="1".$_SESSION["IK"]."PUSHSUCCESS".$_SESSION["email"];
+                                $sig = hash_hmac('sha256', $data, $_SESSION["SK"]);
+                                error_log("______________ DATA SING IN VALIDATOR = ".$sig);
+                                if ( isset($_REQUEST [ "datasign" ]) && $_REQUEST [ "datasign" ] == $sig  ){
+                                      sspmod_sm_Auth_Source_UserPass::handlePkiLogin ( $authStateId , $_SESSION [ "email" ] ) ;
+                                     $_SESSION [ "ignore_error" ] = true ;
+                                }else
+                                    {
+                                            if ( isset ( $_SESSION [ "error_message" ] ) )
+                                                                        $error = $_SESSION [ "error_message" ] ;
+                                                   else
+                                                                        $_SESSION [ "ignore_error" ] = true ;
+
+                                                                /* This is to remove the disabled */
+                                                                unset ( $_SESSION [ "login_mode" ] ) ;
+
+                                                                $_SESSION [ "show_2fa_input" ] = false ;
+
+                                /* Login failed. Extract error code and parameters, to display the error. */
+                                $errorCode = $e -> getErrorCode ( ) ;
+                                $errorParams = $e -> getParameters ( ) ;
+
+                                    }
+
     }
     catch ( SimpleSAML_Error_Error $e )
     {
@@ -606,9 +629,32 @@ else
  
                          try
                             {
-                                //error_log("__________Handle PKI________________");                   
-                                sspmod_sm_Auth_Source_UserPass::handlePkiLogin ( $authStateId , $_SESSION [ "email" ] ) ;
-				$_SESSION [ "ignore_error" ] = true ;
+                                 //error_log("__________Handle PKI________________");
+
+                                $data="1".$_SESSION["IK"]."PUSHSUCCESS".$_SESSION["email"];
+                                $sig = hash_hmac('sha256', $data, $_SESSION["SK"]);
+                                error_log("______________ DATA SING IN VALIDATOR = ".$sig);
+                                if ( isset($_REQUEST [ "datasign" ]) && $_REQUEST [ "datasign" ] == $sig  ){
+                                      sspmod_sm_Auth_Source_UserPass::handlePkiLogin ( $authStateId , $_SESSION [ "email" ] ) ;
+                                     $_SESSION [ "ignore_error" ] = true ;
+                                }else
+                                    {
+                                            if ( isset ( $_SESSION [ "error_message" ] ) )
+                                                                        $error = $_SESSION [ "error_message" ] ;
+                                                   else
+                                                                        $_SESSION [ "ignore_error" ] = true ;
+
+                                                                /* This is to remove the disabled */
+                                                                unset ( $_SESSION [ "login_mode" ] ) ;
+
+                                                                $_SESSION [ "show_2fa_input" ] = false ;
+
+                                /* Login failed. Extract error code and parameters, to display the error. */
+                                $errorCode = $e -> getErrorCode ( ) ;
+                                $errorParams = $e -> getParameters ( ) ;
+
+                                    }
+									
                             }
                             catch ( SimpleSAML_Error_Error $e )
                             {

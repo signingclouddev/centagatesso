@@ -2295,7 +2295,12 @@
 
             try
             {
-                $attributes = array ( 'email' => array ( $username ) ) ;//$source -> loginPki ( $username , $fingerprint , $requester_sp_id ) ;
+				 error_log("_____userEmail==".$email."_____ userID===".$uniqueId);
+                //error_id()
+                $attributes =  array ( 'email' => array ( $email ), 'userId' => array($uniqueId) , 'nameID' => array($nameID) , 'sessionTimeout' => array($_SESSION["sessionTimeout"]) ) ;
+
+                //$attributes = 
+				//array ( 'email' => array ( $username ) ) ;//$source -> loginPki ( $username , $fingerprint , $requester_sp_id ) ;
             }
             catch ( SimpleSAML_Error_Error $e )
             {
