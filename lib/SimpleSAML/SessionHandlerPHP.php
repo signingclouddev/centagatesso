@@ -113,8 +113,9 @@ class SimpleSAML_SessionHandlerPHP extends SimpleSAML_SessionHandler
              */
             session_cache_limiter('');
         }
-        @session_start();
+        
         session_cache_limiter($cacheLimiter);
+		@session_start();
     }
 
 
