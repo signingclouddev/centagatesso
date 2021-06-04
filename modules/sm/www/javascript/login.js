@@ -262,4 +262,23 @@ function showQrOtpInput ( )
 	
 	return false ;
 }
+
+
+function requestSINGPASS ( )
+{
+    var requestSingPassField = $( "#request_singpass" ) ;
+    var loginForm = $( "#loginform" ) ;
+    
+    if ( requestSingPassField )
+    {
+        requestSingPassField.val ( "1" ) ;
+    }
+    
+    if ( loginForm )
+    {
+        loginForm.submit ( ) ;
+    }
+	
+	return false ;
+}
                    

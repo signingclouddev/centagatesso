@@ -13,6 +13,7 @@
 		$_SESSION [ "mobile_softcert_enabled" ] = false ;
 		$_SESSION [ "mobile_audiopass_enabled" ] = false ;
 		$_SESSION [ "qrcode_enabled" ] = false ;
+		$_SESSION [ "singpass_enabled" ] = false ;
 		$_SESSION [ "num_of_2fa" ] = 0 ;
 		
 		foreach ( $auth_methods_array as $auth_method )
@@ -66,6 +67,11 @@
 					$_SESSION [ "num_of_2fa" ] = $_SESSION [ "num_of_2fa" ] + 1 ;
 					
 					break ;
+					
+				case "SINGPASS":
+					$_SESSION [ "singpass_enabled" ] = true ;
+					$_SESSION [ "num_of_2fa" ] = $_SESSION [ "num_of_2fa" ] + 1 ;
+					break;
 			}
 		}
 	}
@@ -100,9 +106,9 @@
 		$response_body = get_object_vars ( $response -> body ) ;
 		$response_object = json_decode ( $response_body [ "object" ] ) ;
 
-               //error_log(" _______________CHECK STATE ,  SEND DATA ".$json."___________ , RESPONSE = ".$response);
+		//error_log(" _______________CHECK STATE ,  SEND DATA ".$json."___________ , RESPONSE = ".$response);
 	        
-        	if ( $response -> code == 200 )
+		if ( $response -> code == 200 )
 		{
 			if ( $response -> body -> code === "0" )
 			{
@@ -118,34 +124,35 @@
 
 				//determineAuthMethods ( $auth_methods_array ) ;                            
 							
-				if ( isset ( $_SESSION [ "multi_step_auth" ] ) && $_SESSION [ "multi_step_auth" ] == true )
+				if ( isset ( $_SESSION [ "multi_step_auth" ] ) && $_SESSION [ "multi_step_auth" ] == true ){
 					$_SESSION [ "reset_login_form" ] = true ;
-				
+				}
 
-                                error_log("_______check stat , auth statc = ".$_SESSION [ "auth_static" ]);
+				error_log("_______check stat , auth statc = ".$_SESSION [ "auth_static" ]);
 
 				if ( $_SESSION [ "auth_static" ] && isset ( $response_object -> { "multiStepAuth" } ) && $response_object -> { "multiStepAuth" } === "true" )
 				{
 					$_SESSION [ "multi_step_auth" ] = true ;
 					unset ( $new_secret_code ) ;
 				}
-				else
+				else{
 					$_SESSION [ "multi_step_auth" ] = false ;
+				}
 					
 				$_SESSION [ "authToken" ] = $new_auth_token ;
 				
-				if ( ! isset ( $new_secret_code ) && $_SESSION [ "multi_step_auth" ] == false )
+				if ( ! isset ( $new_secret_code ) && $_SESSION [ "multi_step_auth" ] == false ){
 					echo "-1|Invalid credentials" ;
-				else if ( ! isset ( $new_secret_code ) && $_SESSION [ "multi_step_auth" ] == true )
+				}else if ( ! isset ( $new_secret_code ) && $_SESSION [ "multi_step_auth" ] == true ){
 					echo "-2" ;
-				else{
+				}else{
 
-                                        //error_log("SUCCESS_______________");
-                                        $_SESSION["2FA_STATUS"]=true;
-				error_log("SUCCESS_______________ 2fa status =".$_SESSION["2FA_STATUS"]);
-                                 	echo "1" ;
-			            }
-}
+					//error_log("SUCCESS_______________");
+					$_SESSION["2FA_STATUS"]=true;
+					error_log("SUCCESS_______________ 2fa status =".$_SESSION["2FA_STATUS"]);
+					echo "1" ;
+				}
+			}
 			else if ( $response -> body -> code === "23007" )
 			{
 				echo "2" ;
