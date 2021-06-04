@@ -140,10 +140,12 @@
 					echo "-2" ;
 				else{
 
-                                        //error_log("SUCCESS_______________");
-                                        $_SESSION["2FA_STATUS"]=true;
-				error_log("SUCCESS_______________ 2fa status =".$_SESSION["2FA_STATUS"]);
-                                 	echo "1" ;
+                        $_SESSION["MFA_STATUS"]=true;
+                        //error_log("___________SESSION DATA = ".json_encode($_SESSION));
+                        $data="1".$_SESSION["IK"]."PUSHSUCCESS".$email.$_SESSION [ "authToken" ];
+                        $sig = hash_hmac('sha256', $data, $_SESSION["SK"]);
+                        error_log("___________ DATA SIGN = ".$sig);
+                        echo "1|".$sig ;
 			            }
 }
 			else if ( $response -> body -> code === "23007" )
