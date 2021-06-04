@@ -860,9 +860,12 @@ else
 						    /* Mobile push  login */
                             try
                             {
-                                                                error_log("_________2FA STATUS = ".$_SESSION["2FA_STATUS"]);
+                                 $data="1".$_SESSION["IK"]."PUSHSUCCESS".$_SESSION["email"].$_SESSION [ "authToken" ];
+                                 $sig = hash_hmac('sha256', $data, $_SESSION["SK"]);
+ 
+                                error_log("_________2FA STATUS = ".$_SESSION["2FA_STATUS"]);
 
-								if ( isset ( $_REQUEST [ "m" ] ) && $_REQUEST [ "m" ] == "1" )
+								if ( isset ( $_REQUEST [ "m" ] ) && $_REQUEST [ "m" ] == "1" && $_REQUEST["datasign"]==$sig  )
 								{
 									$response_object = $_SESSION [ "response_object" ] ;
 			
@@ -915,7 +918,10 @@ else
 							
 							try
 							{
-								if ( isset ( $_REQUEST [ "m" ] ) && $_REQUEST [ "m" ] == "1"  && isset($_SESSION["2FA_STATUS"]) && $_SESSION["2FA_STATUS"]  )
+                               $data="1".$_SESSION["IK"]."PUSHSUCCESS".$_SESSION["email"].$_SESSION [ "authToken" ];
+                               $sig = hash_hmac('sha256', $data, $_SESSION["SK"]);
+
+								if ( isset ( $_REQUEST [ "m" ] ) && $_REQUEST [ "m" ] == "1"  &&  $_REQUEST["datasign"]==$sig  )
 								{
 									$response_object = $_SESSION [ "response_object" ] ;
 			             //error_log("__________Handle QR ________________");						
