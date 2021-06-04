@@ -298,7 +298,7 @@ $_SESSION["stepupAuth"]="Off";
                                                                                                                 {
                                                                                                                        console.log("SUCCESS LOGIN_____");
                                                                                                                         /* Login successful */
-                                                                                                                        window.location = "loginuserpass.php?m=1&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
+                                                                                                                        window.location = "loginuserpass.php?m=1&datasign="+response[1]+"&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
                                                                                                                 }
                                                 },
                                                 error: function ( jqXHR , status )
