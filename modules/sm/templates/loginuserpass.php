@@ -43,8 +43,34 @@
 		<script type="text/javascript" src="javascript/ndi_embedded_auth.js"></script>
 		<script type="text/javascript" src="javascript/login.js"></script>
 		<script type="text/javascript" src="javascript/json2.js"></script>
-		<script type="text/javascript">
+		
+		<style type="text/css">
+			/* The Modal (background) */
+			.modal {
+			  display: none; /* Hidden by default */
+			  position: fixed; /* Stay in place */
+			  z-index: 1; /* Sit on top */
+			  padding-top: 100px; /* Location of the box */
+			  left: 0;
+			  top: 0;
+			  width: 100%; /* Full width */
+			  height: 100%; /* Full height */
+			  overflow: auto; /* Enable scroll if needed */
+			  background-color: rgb(0,0,0); /* Fallback color */
+			  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+			}
 
+			/* Modal Content */
+			.modal-content {
+			  background-color: #fefefe;
+			  margin: auto;
+			  padding: 20px;
+			  border: 1px solid #888;
+			  width: 38%;
+			}
+		</style>
+		
+		<script type="text/javascript">
                 
 		function requestPki ( )
 		{
@@ -206,7 +232,7 @@
 				<?php
 			}
 			?>
-								
+			
 			function enablePass ( )
 			{
 				var email = $.trim ( $( '#email' ).val ( ) ) ;
@@ -232,39 +258,15 @@
 			}
 			
 			$( document ).ready ( function ( )
-			{
-				console.log("onready doc");
-				var authToken = "<?php echo $_SESSION['singPassAuthToken']; ?>";
-				console.log("auth token: " +  authToken);
-				
-				async function init() {
-					const authParamsSupplier = async () => {
-					  // Replace the below with an `await`ed call to initiate an auth session on your backend
-					  // which will generate state+nonce values, e.g
-					  return { state: authToken, nonce: "xBrBvQDeGeasssdfgh" };
-					};
-
-					const onError = (errorId, message) => {
-					  console.log(`onError. errorId:${errorId} message:${message}`);
-					};
-
-					const initAuthSessionResponse = window.NDI.initAuthSession(
-					  'ndi-qr',
-					  {
-						clientId: '0rPfy8hKffupdQPC66GRuyOhWHf08Hcb', // Replace with your client ID
-						redirectUri: 'https://demo.securemetric.com/centagate/authSingPassLogin',// Replace with a registered redirect URI
-						scope: 'openid',
-						responseType: 'code'
-					  },
-					  authParamsSupplier,
-					  onError
-					);
-
-					console.log('initAuthSession: ', initAuthSessionResponse);
+			{	
+			
+				var authMethod = "<?php echo $_SESSION['auth_method']; ?>";
+					
+				if( authMethod == "SINGPASS" ){
+					var modal = document.getElementById("myModal");
+					modal.style.display = "block";
 				}
-			  
-			  init();
-				
+			
 				<?php 
 				if ($_SESSION["stepupAuth"]=="On" && isset($_SESSION["email"]))
 				{
@@ -323,12 +325,12 @@
 							},
 							error: function ( jqXHR , status )
 							{
-									// error handler
-									var statusCode = jqXHR.status ; //200
-									var head = jqXHR.getAllResponseHeaders ( ) ; //Detail header info
+								// error handler
+								var statusCode = jqXHR.status ; //200
+								var head = jqXHR.getAllResponseHeaders ( ) ; //Detail header info
 
-									//alert("The following error occured: " + statusCode + "\n" + head)
-									console.error ( "The following error occured: " + status , jqXHR ) ;
+								//alert("The following error occured: " + statusCode + "\n" + head)
+								console.error ( "The following error occured: " + status , jqXHR ) ;
 							}
 						});
 					}										
@@ -1230,10 +1232,6 @@
 														<img src="qrcode.php?qr=<?php echo $_SESSION [ "qrCode" ] ?>" width="250px" height="250px" />
 													</td>
 												</tr>
-												
-												<tr>
-											
-												</tr>
 											</table>
 											
 											<script type="text/javascript">
@@ -1343,19 +1341,16 @@
 									}else if ($login_mode == 16 ){
 										/* SingPass login */
 										?>
-											<table style="margin-left: 20px; max-width: 300px">
-												
-												<tr>
-													<td align="left">
-														<div id="ndi-qr" width="250px" height="250px"></div>
-													</td>
-												</tr>
-												
-												<tr>
-											
-												</tr>
-											</table>
-											
+										
+											<div id="myModal" class="modal">
+											  <!-- Modal content -->
+											  <div class="modal-content">
+												<iframe id="iframeSingPass" src="https://demo.securemetric.com/ndi_qr.html?authToken=<?php echo $_SESSION["singPassAuthToken"] ?>" width="100%" height="400"></iframe>
+												</br></br>
+												<input style="width:100%;margin-left:auto;margin-right:auto;" name="reset_login_button" id="reset_login_button" type="submit" class="btn btn-primary" width="100%" value="<?php echo htmlentities ( $this -> t ( '{login:btn_cancel}' ) ) ; ?>" />
+											  </div>
+											</div>
+														
 											<script type="text/javascript">
 											
 												var invalidLogin = "Invalid credentials." ;
@@ -1381,6 +1376,9 @@
 														if ( response [ 0 ] == "1" )
 														{
 															/* Login successful */
+															var modal = document.getElementById("myModal");
+															modal.style.display = "none";
+															
 															window.location = "loginuserpass.php?m=1&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
 														}
 														else if ( response [ 0 ] == "2" )

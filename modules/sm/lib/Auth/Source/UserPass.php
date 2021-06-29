@@ -1571,8 +1571,7 @@
 				
                 if ( $response -> body -> code === "0" )
                 {
-					//$_SESSION["fido_challenge"] = json_encode($response_object);
-					 $_SESSION [ "singPassAuthToken" ] = $response_object -> { "authToken" } ;
+					$_SESSION [ "singPassAuthToken" ] = $response_object -> { "authToken" } ;
 					error_log("Req SingPass Auth Token Value from session=".$_SESSION["authToken"]);
 					$_SESSION [ "show_2fa_input" ] = true ;
                 }

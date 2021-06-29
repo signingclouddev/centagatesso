@@ -1,61 +1,48 @@
 var loginStateCheckService;
 
-function validateLogin ( )
+function validateLogin()
 {
-    var emailField = $( "#username" ) ;
+    var emailField = $( "#email" ) ;
     var passwordField = $( "#password" ) ;
     var passwordless = $( "#passwordless" ) ;
-    var loginform = $( "#loginform" ) ;
+    var loginForm = $( "#loginform" ) ;
 
     if ( emailField !== null && passwordField !== null )
     {
         var email = emailField.val ( ) ;
         var password = passwordField.val ( ) ;
-
-        
-        if ( email === "" )
+		
+        if ( email == "" || email == null )
         {
             /* Email is empty */
-            emailField.focus ( ) ;
-            msgbox ( 'input_empty_dialog' , "You have not entered your username" ) ;
+            emailField.focus ( );
+			alert("You have not entered your username");
+			return false;
         }
         else if ( !password )
         {
-           console.log("passwordless == true");
-         
-           passwordless.val("1");
-
-          var p=passwordless.val ();
-          console.log("passwordless value =="+p) ;
-        
-          return true; 
-       
-            /* Password ie smpty */
-           // passwordField.focus ( ) ;
-           //   msgbox ( 'input_empty_dialog' , "You have not entered your password" ) ;
+			/* Password is empty */
+			passwordless.val("1");
+			var p=passwordless.val ();
+			return true; 
         }
         else
-        {
-          
+        {	
+			passwordless.val("0");
 
-           passwordless.val("0");
+			var p=passwordless.val ();
+			
+			if ( passwordless )
+			{
+				passwordless.val ( "0" ) ;
+			}
 
-          var p=passwordless.val ();
-          console.log("passwordless value =="+p) ;
-               if ( passwordless )
-            {
-                        passwordless.val ( "0" ) ;
-            }
+			if ( loginForm )
+			{
+				loginForm.submit ( ) ;
+			}
 
-    
-    if ( loginForm )
-    {
-        console.log("submit login");
-        loginForm.submit ( ) ;
-    }
-
-        return false ;
-
+			return true;
         }
     }
 
@@ -268,7 +255,7 @@ function requestSINGPASS ( )
 {
     var requestSingPassField = $( "#request_singpass" ) ;
     var loginForm = $( "#loginform" ) ;
-    
+	
     if ( requestSingPassField )
     {
         requestSingPassField.val ( "1" ) ;
@@ -281,4 +268,3 @@ function requestSINGPASS ( )
 	
 	return false ;
 }
-                   
