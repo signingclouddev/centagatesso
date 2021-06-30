@@ -12,18 +12,17 @@
 		<link href="styles/ui.css" rel="stylesheet" media="all" />
 		<link href="styles/base/jquery.ui.all.css" rel="stylesheet" />
 
-                <meta charset="utf-8"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 
+		<!-- Custom Theme files -->
+		<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+		<link href="css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all" />
+		<!-- //Custom Theme files -->
 
-  	<!-- Custom Theme files -->
-	<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
-	<link href="css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all" />
-	<!-- //Custom Theme files -->
-
-	<!-- web font -->
-	<link href="//fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet"/>
-	<!-- //web font -->
+		<!-- web font -->
+		<link href="//fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet"/>
+		<!-- //web font -->
 
 		<script type="text/javascript" src="javascript/jquery-1.11.1.js"></script>
 		<script type="text/javascript" src="javascript/jquery-ui-1.10.4.js"></script>
@@ -38,62 +37,88 @@
 				echo "<script type=\"text/javascript\" src=\"javascript/ui.js\"></script>";
 			}
 		?>
-	 <script type="text/javascript" src="javascript/base64url-arraybuffer.js"></script>	
-<script type="text/javascript" src="javascript/webauthn.js"></script>
-<script type="text/javascript" src="javascript/fidoapi.js"></script>
+		<script type="text/javascript" src="javascript/base64url-arraybuffer.js"></script>	
+		<script type="text/javascript" src="javascript/webauthn.js"></script>
+		<script type="text/javascript" src="javascript/fidoapi.js"></script>
+		<script type="text/javascript" src="javascript/ndi_embedded_auth.js"></script>
 		<script type="text/javascript" src="javascript/login.js"></script>
 		<script type="text/javascript" src="javascript/json2.js"></script>
-		<script type="text/javascript">
-
-                
-			function requestPki ( )
-			{
-				var loginForm = $( "#loginform" ) ;
-                            	
-				if ( loginForm )
-				{
-					var queryString = window.location.search ;
-				        var qrcode = $( "#request_qr_code" ).val;
- 	                               if (qrcode != 0){ 
-					<?php
-				 	
-						$authMethod = isset($_SESSION["auth_method"]) ? $_SESSION["auth_method"]:"";
-						$login_mode = isset($_SESSION["login_mode"]) ? $_SESSION["login_mode"]:"";
-                                                //error_log("____________________PKI______________________".$authMethod." ___ ".$login_mode);
-
-                                                //$globalConfig = SimpleSAML_Configuration::getInstance ( ) ;
-						$config = SimpleSAML_Configuration::getInstance ();
-						$email = isset($_SESSION['email']) ? $_SESSION['email']:"";
-						$authToken = isset($_SESSION['authToken']) ? $_SESSION['authToken']:"";
-						$secureUrl = $config->getString('ws.baseurl', 'http://localhost:8080')."/centagate/PKILoginServlet?username=".$email."&authToken=".$authToken."&saml_call=saml_call&err=no" ;
-                                                if (empty($authMethod)){                                                
-                                                        //error_log("____________ set auth method to PKI__________");
-                                                       // $_SESSION["auth_method"]="PKI";
-                                                       // $_SESSION["login_mode"]=1;
-                                                 }
-
-					?>
-			                console.log("PKI LOGIN");		
-      			    		var secureSite = "<?php echo $secureUrl ; ?>" + queryString ;
-					//document.location=secureSite;
-				        //	loginForm.attr ( "action" , secureSite ) ;
-					//loginForm.submit ( ) ;
-                                       window.open(secureSite);
-
-                                       var requestPki = $( "#request_pki_code" ) ;
-                                       requestPki.val("1");
-                                       console.log("PKI REQUEST VALUE ="+$( "#request_pki_code" ).val());
-
-                                       var loginForm = $( "#loginform" ) ;
-                                       loginForm.submit();
-
-                              }else{
-                                              console.log("ELSE"); 
-}
-                                      
-				}
+		
+		<style type="text/css">
+			/* The Modal (background) */
+			.modal {
+			  display: none; /* Hidden by default */
+			  position: fixed; /* Stay in place */
+			  z-index: 1; /* Sit on top */
+			  padding-top: 100px; /* Location of the box */
+			  left: 0;
+			  top: 0;
+			  width: 100%; /* Full width */
+			  height: 100%; /* Full height */
+			  overflow: auto; /* Enable scroll if needed */
+			  background-color: rgb(0,0,0); /* Fallback color */
+			  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 			}
-                        
+
+			/* Modal Content */
+			.modal-content {
+			  background-color: #fefefe;
+			  margin: auto;
+			  padding: 20px;
+			  border: 1px solid #888;
+			  width: 38%;
+			}
+		</style>
+		
+		<script type="text/javascript">
+                
+		function requestPki ( )
+		{
+			var loginForm = $( "#loginform" ) ;
+							
+			if ( loginForm )
+			{
+				var queryString = window.location.search ;
+				var qrcode = $( "#request_qr_code" ).val;
+				
+				if (qrcode != 0){ 
+				<?php
+				
+					$authMethod = isset($_SESSION["auth_method"]) ? $_SESSION["auth_method"]:"";
+					$login_mode = isset($_SESSION["login_mode"]) ? $_SESSION["login_mode"]:"";
+					//error_log("____________________PKI______________________".$authMethod." ___ ".$login_mode);
+
+					//$globalConfig = SimpleSAML_Configuration::getInstance ( ) ;
+					
+					$config = SimpleSAML_Configuration::getInstance ();
+					$email = isset($_SESSION['email']) ? $_SESSION['email']:"";
+					$authToken = isset($_SESSION['authToken']) ? $_SESSION['authToken']:"";
+					$secureUrl = $config->getString('ws.baseurl', 'http://localhost:8080')."/centagate/PKILoginServlet?username=".$email."&authToken=".$authToken."&saml_call=saml_call&err=no" ;
+					
+					if (empty($authMethod)){                                                
+						//error_log("____________ set auth method to PKI__________");
+						// $_SESSION["auth_method"]="PKI";
+						// $_SESSION["login_mode"]=1;
+					}
+
+				?>
+				console.log("PKI LOGIN");		
+				var secureSite = "<?php echo $secureUrl ; ?>" + queryString ;
+			
+				window.open(secureSite);
+
+				var requestPki = $( "#request_pki_code" ) ;
+				requestPki.val("1");
+				console.log("PKI REQUEST VALUE ="+$( "#request_pki_code" ).val());
+
+				var loginForm = $( "#loginform" ) ;
+				loginForm.submit();
+
+				}else{
+					console.log("ELSE"); 
+				}				  
+			}
+		}  
 
 			<?php
 			if ( $isBelowIE8 == 1)
@@ -207,7 +232,7 @@
 				<?php
 			}
 			?>
-								
+			
 			function enablePass ( )
 			{
 				var email = $.trim ( $( '#email' ).val ( ) ) ;
@@ -233,67 +258,32 @@
 			}
 			
 			$( document ).ready ( function ( )
-			{
-
-
-                        console.log("onready doc");
-
-
-                       <?php 
-                          if ($_SESSION["stepupAuth"]=="On" && isset($_SESSION["email"])){
-$_SESSION["stepupAuth"]="Off";
-?>
-
-  window.onload = function(){
-
-  var form=document.getElementById('loginform');
-
- var input = document.createElement('input');
-    input.setAttribute('name', 'login_button');
-    input.setAttribute('value', 'Log In');
-    input.setAttribute('type', 'hidden');
-
-    form.appendChild(input);//append the input to the form
-
- form.submit();
-}
-<?php
-}
-?>
-                        <?php if ( isset($_SESSION['email']) && isset($_SESSION['auth_method']) && isset($_SESSION['authToken'])) {
-				echo "const interval = setInterval(function() {refreshAuthState();},1000);";}?>
-
-
-                                                                               function refreshAuthState ( )
-												{
-                                                                                 var url="./checkstate.php?"+"<?php $email = isset($_SESSION['email']) ? $_SESSION['email']:"";$auth_method = isset($_SESSION['auth_method']) ? $_SESSION['auth_method']:"";$authToken = isset($_SESSION['authToken']) ? $_SESSION['authToken']:"";echo "email=". $email. "&auth_method=". $auth_method."&authToken=". $authToken;?>";
-
-										 console.log(url);
+			{	
 			
-                                                                                 var dt = new Date ( ) ;
-													var ajax = dt.getTime ( ) ;
-													  jQuery.ajax ( {
-                                                                                                           type: "POST",
-                                                                                                          url: url,
-                                                                                                         data: $( "#loginform" ).serialize ( ),
-                                                statusCode:
-                                                {
-                                                        200: function ( response ) { },
-                                                        400: function ( response ) { },
-                                                        401: function ( response ) { },
-                                                        403: function ( response ) { },
-                                                        404: function ( response ) { }
-                                                },
-                                                success: function ( data , status , jqXHR )
-                                                {
-                                                       
-                                                           console.log("data====="+data);
+				var authMethod = "<?php echo $_SESSION['auth_method']; ?>";
+					
+				if( authMethod == "SINGPASS" ){
+					var modal = document.getElementById("myModal");
+					modal.style.display = "block";
+				}
+			
+				<?php 
+				if ($_SESSION["stepupAuth"]=="On" && isset($_SESSION["email"]))
+				{
+					$_SESSION["stepupAuth"]="Off";
+				?>
+					window.onload = function(){
 
-                                                           var response = data.split ( "|" ) ;
+						var form=document.getElementById('loginform');
 
-                                                           // console.log("response="+response);
+						var input = document.createElement('input');
+						input.setAttribute('name', 'login_button');
+						input.setAttribute('value', 'Log In');
+						input.setAttribute('type', 'hidden');
 
+						form.appendChild(input);//append the input to the form
 
+<<<<<<< HEAD
                                                                                                                 if ( response [ 0 ] == "1" )
                                                                                                                 {
                                                                                                                        console.log("SUCCESS LOGIN_____");
@@ -306,20 +296,64 @@ $_SESSION["stepupAuth"]="Off";
                                                         // error handler
                                                         var statusCode = jqXHR.status ; //200
                                                         var head = jqXHR.getAllResponseHeaders ( ) ; //Detail header info
+=======
+						form.submit();
+					}
+				<?php
+				}
+				?>
+				<?php if ( isset($_SESSION['email']) && isset($_SESSION['auth_method']) && isset($_SESSION['authToken'])) {
+					echo "const interval = setInterval(function() {refreshAuthState();},1000);";}?>
+>>>>>>> feature/SingPassAuthentication
 
-                                                        //alert("The following error occured: " + statusCode + "\n" + head)
-                                                        console.error ( "The following error occured: " + status , jqXHR ) ;
-                                                }
-                                        } ) ;
 
-		 	}										
-										
+					function refreshAuthState ( )
+					{
+						var url="./checkstate.php?"+"<?php $email = isset($_SESSION['email']) ? $_SESSION['email']:"";$auth_method = isset($_SESSION['auth_method']) ? $_SESSION['auth_method']:"";$authToken = isset($_SESSION['authToken']) ? $_SESSION['authToken']:"";echo "email=". $email. "&auth_method=". $auth_method."&authToken=". $authToken;?>";
+						console.log(url);
+						var dt = new Date ( ) ;
+						var ajax = dt.getTime ( ) ;
+						jQuery.ajax ( {
+							type: "POST",
+							url: url,
+							data: $( "#loginform" ).serialize ( ),
+							statusCode:
+							{
+									200: function ( response ) { },
+									400: function ( response ) { },
+									401: function ( response ) { },
+									403: function ( response ) { },
+									404: function ( response ) { }
+							},
+							success: function ( data , status , jqXHR )
+							{
+								console.log("data====="+data);
 
-	
+								var response = data.split ( "|" );
+								
+								if ( response [ 0 ] == "1" )
+								{
+								   console.log("SUCCESS LOGIN_____");
+									/* Login successful */
+									window.location = "loginuserpass.php?m=1&datasign="+response[1]+"&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
+								}
+							},
+							error: function ( jqXHR , status )
+							{
+								// error handler
+								var statusCode = jqXHR.status ; //200
+								var head = jqXHR.getAllResponseHeaders ( ) ; //Detail header info
+
+								//alert("The following error occured: " + statusCode + "\n" + head)
+								console.error ( "The following error occured: " + status , jqXHR ) ;
+							}
+						});
+					}										
+					
 				<?php
 			
-                                       //error_log("_____________________email".$_SESSION["authToken"]."____________");                	
-                                      	if ( isset ( $_SESSION [ "auth_static" ] ) && $_SESSION [ "auth_static" ] == true )
+				   //error_log("_____________________email".$_SESSION["authToken"]."____________");                	
+					if ( isset ( $_SESSION [ "auth_static" ] ) && $_SESSION [ "auth_static" ] == true )
 					{
 						?>
 							setTimeout ( function ( )
@@ -375,9 +409,9 @@ $_SESSION["stepupAuth"]="Off";
 		</script>
 	</head>
 
-	<body   >				
+	<body>				
 		<div class="bg-layer"  style=" <?php echo $_SESSION["body_skin"]; ?>" > 
-                        <img style="width:300px; height:20px; padding:40px;display: block;margin-left: auto;margin-right: auto;" src="images/centagate-logo-ori.png" /> 
+		<img style="width:300px; height:20px; padding:40px;display: block;margin-left: auto;margin-right: auto;" src="images/centagate-logo-ori.png" /> 
 			
 		
 			<?php				
@@ -485,13 +519,11 @@ $_SESSION["stepupAuth"]="Off";
 				}
 			?>
 
-   	
-	
-			<div  >
+			<div>
                                                                                                         
-                                                                                                         <div class="main-icon" >
-                                                                                                            <img src="<?php echo $_SESSION["logo_url"]; ?>" alt="Avatar" style="margin-bottom:10px; border-radius: 50%;width:80px;height:80px;" />
-                                                                                                         </div>
+				 <div class="main-icon" >
+					<img src="<?php echo $_SESSION["logo_url"]; ?>" alt="Avatar" style="margin-bottom:10px; border-radius: 50%;width:80px;height:80px;" />
+				 </div>
                                                                                                
 
 				<div class="loginpanel"> 
@@ -499,52 +531,49 @@ $_SESSION["stepupAuth"]="Off";
 						<form id="loginform" method="post" style="padding-top:2px; padding-bottom:5px; box-shadow: 0px 24px 25px rgba(36, 43 ,82, 0.2); padding: 13px;" novalidate>
 							
 							<?php
-							if ( ! isset ( $_SESSION [ "multi_step_auth" ] ) || $_SESSION [ "multi_step_auth" ] === false )
+								if ( ! isset ( $_SESSION [ "multi_step_auth" ] ) || $_SESSION [ "multi_step_auth" ] === false )
 								{
-                                                                  if ( isset ( $_SESSION [ "pwd" ] ) && $_SESSION [ "pwd" ] === "true" ) {  
+									if ( isset ( $_SESSION [ "pwd" ] ) && $_SESSION [ "pwd" ] === "true" ) {  
 							?>
-							      <div class="main-icon" >
+										<div class="main-icon" >
 
-                                                              <div id="secImage" style="margin-top:5px; ">
+										  <div id="secImage" style="margin-top:5px; ">
 
-                                                                   <img style="margin-top:15px; width:150px; height:120px; "  src="images/qmark.png"/>
+											   <img style="margin-top:15px; width:150px; height:120px; "  src="images/qmark.png"/>
 
-                                                              </div>
-                                                             </div>
-
+										  </div>
+										  
+										</div>
 							<?php
-							}
-          	                                    }
+									}
+								}
 							?>
 							
 							<?php
 								if ( ! isset ( $_SESSION [ "multi_step_auth" ] ) || $_SESSION [ "multi_step_auth" ] === false )
 								{
 									?>
-										
-								
                                                                                       
-						                                                         <div  style="aligment:center; margin-top:20px; margin-left:7px;" align="center">
+										<div  style="aligment:center; margin-top:20px; margin-left:7px;" align="center">
 									                                       
-														<input  style="background-color: #EFEFEF; width:224px;"  type="email" id="email" name="email" placeholder="Username"  onfocus="disablePass();" onblur="enablePass();" <?php if ( isset ( $_SESSION [ "auth_static" ] ) && $_SESSION [ "auth_static" ] == true ) echo "disabled=\"disabled\"" ; ?> <?php if ( isset ( $_SESSION [ "email" ] ) ) echo "value=\"" . $_SESSION [ "email" ] . "\"" ; ?> />
-													
+											<input  style="background-color: #EFEFEF; width:224px;"  type="email" id="email" name="email" placeholder="Username"  onfocus="disablePass();" onblur="enablePass();" <?php if ( isset ( $_SESSION [ "auth_static" ] ) && $_SESSION [ "auth_static" ] == true ) echo "disabled=\"disabled\"" ; ?> <?php if ( isset ( $_SESSION [ "email" ] ) ) echo "value=\"" . $_SESSION [ "email" ] . "\"" ; ?> />
 												
-                                                                                                </div>
+										</div>
 
-                                                                                               <?php
-                                                                                  if (  isset ( $_SESSION [ "pwd" ] ) && $_SESSION [ "pwd" ] === "true" )
-                                                                                       { ?> 
-                                                                                                <div style="aligment:center; margin-top:10px;  margin-left:7px;" align="center" >
-											                        
-														<input style="background-color: #EFEFEF; width:224px;" type="password" id="password" placeholder="Password" name="password" <?php if ( isset ( $_SESSION [ "auth_static" ] ) && $_SESSION [ "auth_static" ] == true ) echo "disabled=\"disabled\" value=\"********\"" ; ?>   />
-                                                                                               </div>	
-                                                                      <script type="text/javascript">
-                                                                               document.getElementById("password").focus();
-                                                                      </script>
+										<?php
+											if (  isset ( $_SESSION [ "pwd" ] ) && $_SESSION [ "pwd" ] === "true" )
+										   { ?> 
+												<div style="aligment:center; margin-top:10px;  margin-left:7px;" align="center" >             
+													<input style="background-color: #EFEFEF; width:224px;" type="password" id="password" placeholder="Password" name="password" <?php if ( isset ( $_SESSION [ "auth_static" ] ) && $_SESSION [ "auth_static" ] == true ) echo "disabled=\"disabled\" value=\"********\"" ; ?>   />
+												</div>	
+												<script type="text/javascript">
+													document.getElementById("password").focus();
+												</script>
 										<?php } ?>
-                                                                              <input type="hidden" id="passwordless" name="passwordless" value="1" />
+										
+										<input type="hidden" id="passwordless" name="passwordless" value="1" />
 
-	        									<table cellspacing="0" cellpadding="0" style="margin-left: 25px">
+										<table cellspacing="0" cellpadding="0" style="margin-left: 25px">
 											<tr>
 												<td>
 													<?php
@@ -561,7 +590,7 @@ $_SESSION["stepupAuth"]="Off";
 																<input style="width:240px;margin-left:0px;"   id="login_button" name="login_button" type="submit" onclick="return validateLogin();" class="btn btn-primary" value="<?php echo htmlentities ( $this -> t ( '{login:btn_submit}' ) ) ; ?>" />
 															<?php
 
-											}
+														}
 													?>
 												</td>
 											</tr>
@@ -614,7 +643,8 @@ $_SESSION["stepupAuth"]="Off";
 										$mobile_softcert_enabled = isset ( $_SESSION [ "mobile_softcert_enabled" ] ) && $_SESSION [ "mobile_softcert_enabled" ] == true ;
 										$mobile_push_enabled = isset ( $_SESSION [ "mobile_push_enabled" ] ) && $_SESSION [ "mobile_push_enabled" ] == true ;
 										$qrcode_enabled = isset ( $_SESSION [ "qrcode_enabled" ] ) && $_SESSION [ "qrcode_enabled" ] == true ;
-									        $fido_enabled = isset ( $_SESSION [ "fido_enabled" ] ) && $_SESSION [ "fido_enabled" ] == true ;	
+										$fido_enabled = isset ( $_SESSION [ "fido_enabled" ] ) && $_SESSION [ "fido_enabled" ] == true ;
+										$singpass_enabled = isset ( $_SESSION [ "singpass_enabled" ] ) && $_SESSION [ "singpass_enabled" ] == true ;
 										?>
 											<center>
 												<div id="scroll-pane1" class="scroll-pane1">
@@ -625,33 +655,58 @@ $_SESSION["stepupAuth"]="Off";
 														<input type="hidden" id="request_mobile_soft_cert" name="request_mobile_soft_cert" value="0" />
 														<input type="hidden" id="request_mobile_push" name="request_mobile_push" value="0" />
 														<input type="hidden" id="request_qr_code" name="request_qr_code" value="0" />
-              													<input type="hidden" id="request_pki_code" name="request_pki_code" value="0" />
-	                                                                                                        <input type="hidden" id="request_fido" name="request_fido" value="0" />
-                                                                                                                <input type="hidden" id="fidoPublicKeyCredential" name="fidoPublicKeyCredential"  />
+														<input type="hidden" id="request_pki_code" name="request_pki_code" value="0" />
+														<input type="hidden" id="request_fido" name="request_fido" value="0" />
+														<input type="hidden" id="fidoPublicKeyCredential" name="fidoPublicKeyCredential"  />
+														<input type="hidden" id="request_singpass" name="request_singpass" value="0"/>
+														
+														<?php
+															if ( $singpass_enabled )
+															{
+																?>
+																	<a href="#" title="SingPass Login" class="twofa2" <?php if ( ! $singpass_enabled || ( isset ( $_SESSION [ "show_2fa_input" ] ) && $_SESSION [ "show_2fa_input" ] == true ) ) echo "disabled=\"disabled\"" ; else echo "onclick=\"requestSINGPASS()\"" ; ?>>
+																		<?php
+																			if ( $singpass_enabled && ( ! isset ( $_SESSION [ "show_2fa_input" ] ) || $_SESSION [ "show_2fa_input" ] == false ) )
+																			{
+																				?>
+																					<img src="images/singpass-active.png" id="singpass" style="margin-bottom:29px; height: 60px; width: 60px;display: inline-block; margin-right:20px;" />
+																				<?php
+																			}
+																			else
+																			{
+																				?>
+																					<img src="images/singpass-inactive.png" id="singpass" style="margin-bottom:29px; height: 60px; width: 60px;display: inline-block; margin-right:20px; "/>
+																				<?php
+																			}
+																		?>
+																	</a>
+																<?php
+															}
+														?>
                                                                                                                 
-                                                                                                                <?php
-                                                                                                                        if ( $fido_enabled )
-                                                                                                                        {
-                                                                                                                                ?>
-                                                                                                                                        <a href="#" title="FIDO Login" class="twofa2" <?php if ( ! $fido_enabled || ( isset ( $_SESSION [ "show_2fa_input" ] ) && $_SESSION [ "show_2fa_input" ] == true ) ) echo "disabled=\"disabled\"" ; else echo "onclick=\"requestFIDO( )\"" ; ?>>
-                                                                                                                                                <?php
-                                                                                                                                                        if ( $fido_enabled && ( ! isset ( $_SESSION [ "show_2fa_input" ] ) || $_SESSION [ "show_2fa_input" ] == false ) )
-                                                                                                                                                        {
-                                                                                                                                                                ?>
-                                                                                                                                                                       <img src="images/fido-login-s.png" id="fido" style="margin-bottom:29px; height: 60px; width: 60px;display: inline-block; margin-right:20px;" />
-                                                                                                                                                                <?php
-                                                                                                                                                        }
-                                                                                                                                                        else
-                                                                                                                                                        {
-                                                                                                                                                                ?>
-                                                                                                                                                               <img  src="images/fido-login-hover-s.png" id="fido" style="margin-bottom:29px; height: 60px; width: 60px;display: inline-block; margin-right:20px; "   />
-                                                                                                                                                                  <?php
-                                                                                                                                                        }
-                                                                                                                                                ?>
-                                                                                                                                        </a>
-                                                                                                                                <?php
-                                                                                                                        }
-                                                                                                                ?>
+														<?php
+															if ( $fido_enabled )
+															{
+																?>
+																	<a href="#" title="FIDO Login" class="twofa2" <?php if ( ! $fido_enabled || ( isset ( $_SESSION [ "show_2fa_input" ] ) && $_SESSION [ "show_2fa_input" ] == true ) ) echo "disabled=\"disabled\"" ; else echo "onclick=\"requestFIDO( )\"" ; ?>>
+																		<?php
+																			if ( $fido_enabled && ( ! isset ( $_SESSION [ "show_2fa_input" ] ) || $_SESSION [ "show_2fa_input" ] == false ) )
+																			{
+																				?>
+																					<img src="images/fido-login-s.png" id="fido" style="margin-bottom:29px; height: 60px; width: 60px;display: inline-block; margin-right:20px;" />
+																				<?php
+																			}
+																			else
+																			{
+																				?>
+																					<img src="images/fido-login-hover-s.png" id="fido" style="margin-bottom:29px; height: 60px; width: 60px;display: inline-block; margin-right:20px; "   />
+																				<?php
+																			}
+																		?>
+																	</a>
+																<?php
+															}
+														?>
 
 
 														<?php
@@ -663,13 +718,13 @@ $_SESSION["stepupAuth"]="Off";
 																			if ( $pki_enabled && ( ! isset ( $_SESSION [ "show_2fa_input" ] ) || $_SESSION [ "show_2fa_input" ] == false ) )
 																			{
 																				?>
-																			  <img id="pki"  src="images/pki-login-s.png"  style="margin-top:20px; display: inline-block; width:100px;high:100px;" />
+																					<img id="pki"  src="images/pki-login-s.png"  style="margin-top:20px; display: inline-block; width:100px;high:100px;" />
 																				<?php
 																			}
 																			else
 																			{
 																				?>
-																			    <img id="pki"  src="images/pki-login-s-disabled.png"  style="display: inline-block; width:100px;high:100px;" />
+																					<img id="pki"  src="images/pki-login-s-disabled.png"  style="display: inline-block; width:100px;high:100px;" />
 																				<?php
 																			}
 																		?>
@@ -790,7 +845,7 @@ $_SESSION["stepupAuth"]="Off";
 																			else
 																			{
 																				?>
-																																										                              <img id="mobilecert"  src="images/msoftcert-s-disabled.png"  style="display: inline-block; width:100px;high:100px;" />
+																					<img id="mobilecert"  src="images/msoftcert-s-disabled.png"  style="display: inline-block; width:100px;high:100px;" />
 
 																				<?php
 																			}
@@ -835,14 +890,14 @@ $_SESSION["stepupAuth"]="Off";
 																			if ( $qrcode_enabled && ( ! isset ( $_SESSION [ "show_2fa_input" ] ) || $_SESSION [ "show_2fa_input" ] == false ) )
 																			{
 																				?>
-																															 <img id="qrcode"  src="images/qr-code-s.png"  style="margin-bottom:36px; height: 60px; width: 60px;display: inline-block;margin-left:20px;" />
+																					<img id="qrcode"  src="images/qr-code-s.png"  style="margin-bottom:36px; height: 60px; width: 60px;display: inline-block;margin-left:20px;" />
 
 																				<?php
 																			}
 																			else
 																			{
 																				?>
-																				  															 <img id="qrcode"  src="images/qr-code-s-disabled.png"  style="margin-bottom:36px; height: 60px; width: 60px;display: inline-block;margin-left:20px;" />
+																					<img id="qrcode"  src="images/qr-code-s-disabled.png"  style="margin-bottom:36px; height: 60px; width: 60px;display: inline-block;margin-left:20px;" />
 
 																				<?php
 																			}
@@ -864,27 +919,26 @@ $_SESSION["stepupAuth"]="Off";
 								{
 									$login_mode = $_SESSION [ "login_mode" ] ;
 
-	                                                                //error_log("LOGIN MODE========".$login_mode);
-								
-                                                                        if ($login_mode == 15 ){
-                                                                             echo "<script> verifyRegistration('".$_SESSION['fido_challenge']."'); </script>";
-                                                                         }
+									//error_log("LOGIN MODE========".$login_mode);
 
-	       								if ( $login_mode == 2 )
+									if ( $login_mode == 2 )
 									{
 										/* OTP login */
 										?>
 											<table style="margin-left: 10px; max-width: 300px">
 												<tr>
-													<td align="left">
-                                                                                                                 <label><?php 
-$devName=$_SESSION["devName"];
-if (empty($devName)){
-   echo "Default device : offline \n ";
-}else{
-  echo "Default device : ".$devName." \n";
-}
- ?></label><br/> 
+													<td align="left">                                                      
+														 <label>
+															<?php 
+																$devName=$_SESSION["devName"];
+																if (empty($devName)){
+																	echo "Default device : offline \n ";
+																}else{
+																	echo "Default device : ".$devName." \n";
+																}
+															 ?>
+														 </label>
+														 <br/> 
 														<label><?php echo htmlentities ( $this -> t ( '{login:enter_otp}' ) ) ; ?></label>
 													</td>
 												</tr>
@@ -984,17 +1038,18 @@ if (empty($devName)){
 												<tr>
 													<td align="left">
 														
-                                                                                                                 <label><?php
-$devName=$_SESSION["devName"];
-if (empty($devName)){
-   echo "Default device : offline \n ";
-}else{
-  echo "Default device : ".$devName." \n";
-}
- ?></label><br/>
-
-
-                 <label><?php echo htmlentities ( $this -> t ( '{login:otp_challenge}' ) ) ; ?></label>
+														<label>
+															<?php
+																$devName=$_SESSION["devName"];
+																if (empty($devName)){
+																	echo "Default device : offline \n ";
+																}else{
+																	echo "Default device : ".$devName." \n";
+																}
+															?>
+														</label>
+														<br/>
+														<label><?php echo htmlentities ( $this -> t ( '{login:otp_challenge}' ) ) ; ?></label>
 													</td>
 												</tr>
 												
@@ -1046,14 +1101,15 @@ if (empty($devName)){
 											<label style="margin-left: 10px">
 
 												Please wait...<br />
-                                                                                                                 <label  style="margin-left: 10px"><?php
-$devName=$_SESSION["devName"];
-if (empty($devName)){
-   echo "Default device : offline \n ";
-}else{
-  echo "Default device : ".$devName." \n";
-}
- ?></label><br/>
+												 <label  style="margin-left: 10px"><?php
+													$devName=$_SESSION["devName"];
+													if (empty($devName)){
+														echo "Default device : offline \n ";
+													}else{
+														echo "Default device : ".$devName." \n";
+													}
+													 ?>
+												 </label><br/>
 
 												<img style="margin-left: 103px" src="./images/prog_wait.gif" /><br />
 											</label>
@@ -1171,18 +1227,16 @@ if (empty($devName)){
 
 											<table style="margin-left: 20px; max-width: 300px">
 												<tr>
-
-
 													<td align="left">
-
-                                                                                                                 <label><?php
-$devName=$_SESSION["devName"];
-if (empty($devName)){
-   echo "Default device : offline \n ";
-}else{
-  echo "Default device : ".$devName." \n";
-}
- ?></label><br/>
+														<label><?php
+															$devName=$_SESSION["devName"];
+															if (empty($devName)){
+															   echo "Default device : offline \n ";
+															}else{
+															  echo "Default device : ".$devName." \n";
+															}
+															 ?>
+														</label><br/>
 
 														<label><?php echo   htmlentities ( $this -> t ( '{login:qr_code_scan_here}' ) ) ; ?></label>
 													</td>
@@ -1193,35 +1247,22 @@ if (empty($devName)){
 														<img src="qrcode.php?qr=<?php echo $_SESSION [ "qrCode" ] ?>" width="250px" height="250px" />
 													</td>
 												</tr>
-												
-												
-												
-		
-												<tr>
-											
-												</tr>
 											</table>
 											
 											<script type="text/javascript">
 
+												$( document ).ready ( function ( )			
+												{
+												 $('#loginform"').on('submit',function(e) {
+													console.log("submit_______________");
+															
+												  });
 
-
-												$( document ).ready ( function ( )
-		
-										{
-
-
-
- $('#loginform"').on('submit',function(e) {
-            console.log("submit_______________");
-          
-      });
-
-                                                                                                   const interval = setInterval(function() {
-                                                                                                        console.log("call AuthState");
-                                                                                                         refreshAuthState(); 
-                                                                                                          // method to be executed;
-                                                                                                         },1000);
+												   const interval = setInterval(function() {
+														console.log("call AuthState");
+														 refreshAuthState(); 
+														  // method to be executed;
+														 },1000);
 													var qrEnterOtpRow = $( "#qr_enter_otp_row" ) ;
 													var qrOtpInputRow = $( "#qr_otp_input_row" ) ;
 													var crSubmitButton = $( "#submit_cr_otp_button" ) ;
@@ -1310,36 +1351,119 @@ if (empty($devName)){
 												}, interval * 1000 ) ;
 											</script>
 										<?php
-									}
-								}
-								else
-								{
-									if ( isset ( $_SESSION [ "multi_step_auth" ] ) && $_SESSION [ "multi_step_auth" ] == true )
-									{
+									}else if ($login_mode == 15 ){
+										echo "<script> verifyRegistration('".$_SESSION['fido_challenge']."'); </script>";
+									}else if ($login_mode == 16 ){
+										/* SingPass login */
 										?>
-											<div>&nbsp;</div>
-											<input style="margin-left: 103px" name="reset_login_button" id="reset_login_button" type="submit" class="btn btn-primary" value="<?php echo htmlentities ( $this -> t ( '{login:btn_cancel}' ) ) ; ?>" />
+										
+											<div id="myModal" class="modal">
+											  <!-- Modal content -->
+											  <div class="modal-content">
+												<iframe id="iframeSingPass" src="https://demo.securemetric.com/ndi_qr.html?authToken=<?php echo $_SESSION["singPassAuthToken"] ?>" width="100%" height="400"></iframe>
+												</br></br>
+												<input style="width:100%;margin-left:auto;margin-right:auto;" name="reset_login_button" id="reset_login_button" type="submit" class="btn btn-primary" width="100%" value="<?php echo htmlentities ( $this -> t ( '{login:btn_cancel}' ) ) ; ?>" />
+											  </div>
+											</div>
+														
+											<script type="text/javascript">
+											
+												var invalidLogin = "Invalid credentials." ;
+												
+												function refreshAuthState ( )
+												{
+													var dt = new Date ( ) ;
+													var ajax = dt.getTime ( ) ;
+													var url = "./checkstate.php?ajax=" + ajax ;
+													
+													$.ajaxSetup ( {
+														cache: false
+													} ) ;
+													
+													$.ajax ( {
+														url: url,
+														type: "POST",
+														timeout: 5000
+													} ).done ( function ( output )
+													{
+														var response = output.split ( "|" ) ;
+														
+														if ( response [ 0 ] == "1" )
+														{
+															/* Login successful */
+															var modal = document.getElementById("myModal");
+															modal.style.display = "none";
+															
+															window.location = "loginuserpass.php?m=1&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
+														}
+														else if ( response [ 0 ] == "2" )
+														{
+															/* Pending. do nothing */
+														}
+														else if ( response [ 0 ] == "0" )
+														{
+															if ( response.length > 1 )
+															{
+																window.location = "loginuserpass.php?m=0&err=" + response [ 1 ] + "&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
+															}
+															else
+															{
+																window.location = "loginuserpass.php?m=0&err=Invalid%20credentials&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
+															}
+														}
+														else if ( response [ 0 ] == "-1" )
+														{
+															if ( response.length > 1 )
+															{
+																window.location = "loginuserpass.php?m=0&err=" + response [ 1 ] + "&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
+															}
+															else
+															{
+																window.location = "loginuserpass.php?m=0&err=Invalid%20credentials&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
+															}
+														}
+														else if ( response [ 0 ] == "-2" )
+														{
+															window.location = "loginuserpass.php?m=2&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
+														}
+														else
+														{
+															document.getElementById ( "divStatus2" ).innerHTML = "<span class='error'>" + response [ 1 ].replace (/\n/g , "" ) + "</span>" ;
+														}
+													} ).fail ( function ( jqXHR , textStatus , errorThrown )
+													{
+														// log the error to the console
+														console.error ( "The following error occured: " + textStatus , errorThrown ) ;
+													} ) ;
+												}
+
+												var interval = <?php $globalConfig -> getValue ( "qrcode-status-check-interval" )?> ;
+												
+												loginStateCheckService = setInterval ( function ( )
+												{
+													refreshAuthState ( )
+												}, interval * 1000 ) ;
+											</script>
 										<?php
+									}else
+									{
+										if ( isset ( $_SESSION [ "multi_step_auth" ] ) && $_SESSION [ "multi_step_auth" ] == true )
+										{
+											?>
+												<div>&nbsp;</div>
+												<input style="margin-left: 103px" name="reset_login_button" id="reset_login_button" type="submit" class="btn btn-primary" value="<?php echo htmlentities ( $this -> t ( '{login:btn_cancel}' ) ) ; ?>" />
+											<?php
+										}
 									}
 								}
 							?>
-						</form>
-					</div>
+					</form>
 				</div>
-
-                                    <div style="margin-top:20px; text-align: center;" class="fixed" id="copyright-wrapper" >
-
-
-                                        <p style="font-size:13px; color: #000"> Powered by  <a  style="color:#000" href="<?php echo htmlentities ( $this -> t ( '{login:company_url}' ) ) ; ?>" title="<?php echo htmlentities ( $this -> t ( '{login:company_title}' ) ) ; ?>"><?php echo htmlentities ( $this -> t ( '{login:company_name_powered_by}' ) ) ; ?></a> </p>
-
-                              </div>
-
-                                <!-- dialogue panel -->
-
-
 			</div>
-
-			
-                
+			<div style="margin-top:20px; text-align: center;" class="fixed" id="copyright-wrapper" >
+				<p style="font-size:13px; color: #000"> Powered by  <a  style="color:#000" href="<?php echo htmlentities ( $this -> t ( '{login:company_url}' ) ) ; ?>" title="<?php echo htmlentities ( $this -> t ( '{login:company_title}' ) ) ; ?>"><?php echo htmlentities ( $this -> t ( '{login:company_name_powered_by}' ) ) ; ?></a> </p>
+			</div>
+			<!-- dialogue panel -->
+		</div>
 	</body>
 </html>
