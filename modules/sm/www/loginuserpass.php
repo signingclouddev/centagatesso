@@ -725,19 +725,6 @@
 								}
 								
 							break ;
-<<<<<<< HEAD
-						
-			case 7:
-						    /* Mobile push  login */
-                            try
-                            {
-                                 $data="1".$_SESSION["IK"]."PUSHSUCCESS".$_SESSION["email"].$_SESSION [ "authToken" ];
-                                 $sig = hash_hmac('sha256', $data, $_SESSION["SK"]);
- 
-                                error_log("_________2FA STATUS = ".$_SESSION["2FA_STATUS"]);
-
-								if ( isset ( $_REQUEST [ "m" ] ) && $_REQUEST [ "m" ] == "1" && $_REQUEST["datasign"]==$sig  )
-=======
 
 							case 3:
 								/* SMS OTP login */
@@ -747,7 +734,6 @@
 									$sms_otp = $_POST [ "sms_otp_field" ] ;
 									
 								try
->>>>>>> feature/SingPassAuthentication
 								{
 									//error_log("________________ handle  sms_____________");
 									sspmod_sm_Auth_Source_UserPass::handleSmsOtpLogin ( $authStateId , $_SESSION [ "email" ] , $sms_otp , $sp_entity_id ) ;
@@ -851,18 +837,9 @@
 								
 							break ;
 							
-<<<<<<< HEAD
-							try
-							{
-                               $data="1".$_SESSION["IK"]."PUSHSUCCESS".$_SESSION["email"].$_SESSION [ "authToken" ];
-                               $sig = hash_hmac('sha256', $data, $_SESSION["SK"]);
-
-								if ( isset ( $_REQUEST [ "m" ] ) && $_REQUEST [ "m" ] == "1"  &&  $_REQUEST["datasign"]==$sig  )
-=======
 							case 7:
 								/* Mobile push  login */
 								try
->>>>>>> feature/SingPassAuthentication
 								{
 									error_log("_________2FA STATUS = ".$_SESSION["2FA_STATUS"]);
 									

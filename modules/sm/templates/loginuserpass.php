@@ -283,20 +283,6 @@
 
 						form.appendChild(input);//append the input to the form
 
-<<<<<<< HEAD
-                                                                                                                if ( response [ 0 ] == "1" )
-                                                                                                                {
-                                                                                                                       console.log("SUCCESS LOGIN_____");
-                                                                                                                        /* Login successful */
-                                                                                                                        window.location = "loginuserpass.php?m=1&datasign="+response[1]+"&AuthState=<?php echo $_REQUEST [ 'AuthState' ] ; ?>" ;
-                                                                                                                }
-                                                },
-                                                error: function ( jqXHR , status )
-                                                {
-                                                        // error handler
-                                                        var statusCode = jqXHR.status ; //200
-                                                        var head = jqXHR.getAllResponseHeaders ( ) ; //Detail header info
-=======
 						form.submit();
 					}
 				<?php
@@ -304,7 +290,6 @@
 				?>
 				<?php if ( isset($_SESSION['email']) && isset($_SESSION['auth_method']) && isset($_SESSION['authToken'])) {
 					echo "const interval = setInterval(function() {refreshAuthState();},1000);";}?>
->>>>>>> feature/SingPassAuthentication
 
 
 					function refreshAuthState ( )
