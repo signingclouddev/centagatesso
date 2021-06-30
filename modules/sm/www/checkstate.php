@@ -122,8 +122,8 @@
 				//$auth_methods = $response_object -> { "authMethods" } ;
 				//$auth_methods_array = split ( "," , $auth_methods ) ;
 
-				//determineAuthMethods ( $auth_methods_array ) ;                            
-							
+				//determineAuthMethods ( $auth_methods_array ) ;
+				
 				if ( isset ( $_SESSION [ "multi_step_auth" ] ) && $_SESSION [ "multi_step_auth" ] == true ){
 					$_SESSION [ "reset_login_form" ] = true ;
 				}
@@ -147,16 +147,6 @@
 					echo "-2" ;
 				}else{
 
-<<<<<<< HEAD
-                        $_SESSION["MFA_STATUS"]=true;
-                        //error_log("___________SESSION DATA = ".json_encode($_SESSION));
-                        $data="1".$_SESSION["IK"]."PUSHSUCCESS".$email.$_SESSION [ "authToken" ];
-                        $sig = hash_hmac('sha256', $data, $_SESSION["SK"]);
-                        error_log("___________ DATA SIGN = ".$sig);
-                        echo "1|".$sig ;
-			            }
-}
-=======
 					//error_log("SUCCESS_______________");
 					//$_SESSION["2FA_STATUS"]=true;
 					//error_log("SUCCESS_______________ 2fa status =".$_SESSION["2FA_STATUS"]);
@@ -170,7 +160,6 @@
 					echo "1|".$sig ;
 				}
 			}
->>>>>>> feature/SingPassAuthentication
 			else if ( $response -> body -> code === "23007" )
 			{
 				echo "2" ;
