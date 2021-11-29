@@ -846,6 +846,7 @@ $config = array(
      *   'trusted.url.domains' => array('sp.example.com', 'app.example.com'),
      */
     'trusted.url.domains' => array('myaccount.google.com','cloud.centagate.com'),
+	//Important Message: WS Base URL need to change from the localhost to the domain name
     'ws.baseurl' => 'http://localhost:8080',
     'ws.integration.key' => 'b66089516e5cba7e87d9bd5faac2fced3077c2765d338fac492f4c0232f43173',
     'logouttype' => 'traditional',

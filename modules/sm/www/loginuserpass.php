@@ -647,7 +647,7 @@
 								{
 									//error_log("__________Handle PKI________________");
 
-									$data="1".$_SESSION["IK"]."PUSHSUCCESS".$_SESSION["email"];
+									$data="1".$_SESSION["IK"]."PUSHSUCCESS".$email.$_SESSION [ "authToken" ];
 									$sig = hash_hmac('sha256', $data, $_SESSION["SK"]);
 									error_log("______________ DATA SING IN VALIDATOR = ".$sig);
 									if ( isset($_REQUEST [ "datasign" ]) && $_REQUEST [ "datasign" ] == $sig  ){

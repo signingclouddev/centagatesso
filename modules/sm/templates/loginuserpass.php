@@ -93,6 +93,7 @@
 					$config = SimpleSAML_Configuration::getInstance ();
 					$email = isset($_SESSION['email']) ? $_SESSION['email']:"";
 					$authToken = isset($_SESSION['authToken']) ? $_SESSION['authToken']:"";
+					//Important Message: Add the domain name of the user WS URL below");
 					$secureUrl = $config->getString('ws.baseurl', 'http://localhost:8080')."/centagate/PKILoginServlet?username=".$email."&authToken=".$authToken."&saml_call=saml_call&err=no" ;
 					
 					if (empty($authMethod)){                                                
